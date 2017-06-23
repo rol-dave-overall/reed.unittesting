@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>http://www.reed.co.uk</licenseUrl>
+    <projectUrl>http://www.reed.co.uk</projectUrl>
+    <iconUrl>http://www.reed.co.uk</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Initial release</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>testing unittesting xml validation</tags>
+  </metadata>
+  <files>
+    <!-- Add a readme -->
+    <file src="readme.txt" target="" />
+  </files>
+</package>
