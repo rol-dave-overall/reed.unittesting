@@ -26,7 +26,6 @@ namespace Reed.UnitTesting.Validators
         /// </summary>
         private readonly StringBuilder verboseMessageStore = new StringBuilder();
 
-        //god knows
         private const string IndentStringPiece = "  ";
 
         /// <summary>
