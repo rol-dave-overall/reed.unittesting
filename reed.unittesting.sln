@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reed.UnitTesting.XmlTransform", "reed.unittesting.xmltransform\Reed.UnitTesting.XmlTransform.csproj", "{AC2F7BCC-ACE3-4DDE-8E5A-556A2A749A67}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reed.UnitTesting.XmlTransform.Tests", "Reed.UnitTesting.XmlTransform.Tests\Reed.UnitTesting.XmlTransform.Tests.csproj", "{30EE3CBB-0C47-4944-B612-239BC429C58B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{AC2F7BCC-ACE3-4DDE-8E5A-556A2A749A67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC2F7BCC-ACE3-4DDE-8E5A-556A2A749A67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC2F7BCC-ACE3-4DDE-8E5A-556A2A749A67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30EE3CBB-0C47-4944-B612-239BC429C58B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30EE3CBB-0C47-4944-B612-239BC429C58B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30EE3CBB-0C47-4944-B612-239BC429C58B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30EE3CBB-0C47-4944-B612-239BC429C58B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

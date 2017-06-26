@@ -132,8 +132,7 @@ namespace Reed.UnitTesting.Validators
         {
             if (this.IndentLevel > 0)
             {
-                int num = this.IndentLevel;
-                this.IndentLevel = num - 1;
+                this.IndentLevel--;
             }
             ((IXmlTransformationLogger)this).LogMessage(type, message, messageArgs);
         }
@@ -201,7 +200,7 @@ namespace Reed.UnitTesting.Validators
             ////    messageImportance = MessageImportance.Normal;
             ////}
 
-            this.LogMessage(type, this.IndentString + message, messageArgs);
+            this.LogMessage(type, string.Concat(this.IndentString, message), messageArgs);
         }
 
         void IXmlTransformationLogger.LogWarning(string message, params object[] messageArgs)
@@ -228,8 +227,7 @@ namespace Reed.UnitTesting.Validators
             }
         }
 
-        void IXmlTransformationLogger.LogWarning(string file, int lineNumber, int linePosition, string message,
-            params object[] messageArgs)
+        void IXmlTransformationLogger.LogWarning(string file, int lineNumber, int linePosition, string message, params object[] messageArgs)
         {
             if (this.treatWarningsAsErrors)
             {
@@ -251,8 +249,7 @@ namespace Reed.UnitTesting.Validators
         void IXmlTransformationLogger.StartSection(MessageType type, string message, params object[] messageArgs)
         {
             ((IXmlTransformationLogger)this).LogMessage(type, message, messageArgs);
-            int num = this.IndentLevel;
-            this.IndentLevel = num + 1;
+            this.IndentLevel++;
         }
 
         #endregion IXmlTransformationLogger Implementation
@@ -309,8 +306,15 @@ namespace Reed.UnitTesting.Validators
             ////this.LogErrorEvent(e);
             if (lineNumber > 0)
             {
-                this.errorMessageStore.AppendLine($"({lineNumber},{columnNumber}) " + message);
-                this.verboseMessageStore.AppendLine($"({lineNumber},{columnNumber}) " + message);
+                //this.errorMessageStore.AppendLine($"({lineNumber},{columnNumber}) " + message);
+                //this.verboseMessageStore.AppendLine($"({lineNumber},{columnNumber}) " + message);
+                string format = "{0} ({1}, {2}) error: {3}";
+                this.errorMessageStore.AppendLine(string.Format(format, System.IO.Path.GetFileName(file), lineNumber,
+                    columnNumber,
+                    string.Format(message, messageArgs)));
+                this.verboseMessageStore.AppendLine(string.Format(format, System.IO.Path.GetFileName(file), lineNumber,
+                    columnNumber,
+                    string.Format(message, messageArgs)));
             }
             else
             {
@@ -382,8 +386,17 @@ namespace Reed.UnitTesting.Validators
             ////bool flag = string.IsNullOrEmpty(file) && lineNumber == 0 && columnNumber == 0;
             ////BuildWarningEventArgs e = new BuildWarningEventArgs(subcategory, warningCode, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, "UnitTest", DateTime.UtcNow, messageArgs);
             ////this.LogWarningEvent(e);
+            string format = "{0} ({1}, {2}) warning: {3}";
 
-            this.warningMessageStore.AppendLine(message);
+            this.warningMessageStore.AppendLine(string.Format(format, System.IO.Path.GetFileName(file), lineNumber,
+                columnNumber,
+                string.Format(message, messageArgs)));
+
+            this.verboseMessageStore.AppendLine(string.Format(format, System.IO.Path.GetFileName(file), lineNumber,
+                columnNumber,
+                string.Format(message, messageArgs)));
+
+            //this.warningMessageStore.AppendLine(message);
         }
 
         /// <summary>
