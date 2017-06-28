@@ -38,7 +38,14 @@ namespace Reed.UnitTesting.Validators
         /// </summary>
         private readonly bool treatWarningsAsErrors;
 
+        /// <summary>
+        /// Backing store for the <see cref="IndentLevel"/> property.
+        /// </summary>
         private int indentLevel;
+
+        /// <summary>
+        /// Backing store for the <see cref="IndentString"/> property.
+        /// </summary>
         private string indentString;
 
         #endregion Fields
@@ -69,11 +76,11 @@ namespace Reed.UnitTesting.Validators
         /// <value><b>true</b> if an error messages has been logged; otherwise <b>false</b>.</value>
         public bool HasLoggedErrors => this.errorMessageStore.Length > 0;
 
-        /// <summary>
-        /// Gets a value indicating whether or not an error message has been logged in the current instance.
-        /// </summary>
-        /// <value><b>true</b> if an error messages has been logged; otherwise <b>false</b>.</value>
-        public bool HasLoggedWarnings => this.warningMessageStore.Length > 0;
+        /////// <summary>
+        /////// Gets a value indicating whether or not an error message has been logged in the current instance.
+        /////// </summary>
+        /////// <value><b>true</b> if an error messages has been logged; otherwise <b>false</b>.</value>
+        ////public bool HasLoggedWarnings => this.warningMessageStore.Length > 0;
 
         private int IndentLevel
         {
@@ -95,7 +102,8 @@ namespace Reed.UnitTesting.Validators
                 if (this.indentString == null)
                 {
                     this.indentString = string.Empty;
-                    for (int i = 0; i < this.indentLevel; i++)
+
+                    for (var i = 0; i < this.indentLevel; i++)
                     {
                         this.indentString += IndentStringPiece;
                     }
@@ -139,7 +147,8 @@ namespace Reed.UnitTesting.Validators
 
         void IXmlTransformationLogger.LogError(string message, params object[] messageArgs)
         {
-            this.LogError(message, messageArgs);
+            //this.LogError(message, messageArgs);
+            this.LogError(null, 0, 0, message, messageArgs);
         }
 
         void IXmlTransformationLogger.LogError(string file, string message, params object[] messageArgs)
@@ -150,7 +159,7 @@ namespace Reed.UnitTesting.Validators
         void IXmlTransformationLogger.LogError(string file, int lineNumber, int linePosition, string message,
             params object[] messageArgs)
         {
-            this.LogError(null, null, null, file, lineNumber, linePosition, 0, 0, string.Format(message, messageArgs));
+            this.LogError(file, lineNumber, linePosition, string.Format(message, messageArgs));
         }
 
         void IXmlTransformationLogger.LogErrorFromException(Exception ex)
@@ -165,11 +174,11 @@ namespace Reed.UnitTesting.Validators
 
         void IXmlTransformationLogger.LogErrorFromException(Exception ex, string file, int lineNumber, int linePosition)
         {
-            string message = ex.Message;
+            var message = ex.Message;
             if (this.stackTrace)
             {
-                StringBuilder stringBuilder = new StringBuilder();
-                for (Exception ex2 = ex; ex2 != null; ex2 = ex2.InnerException)
+                var stringBuilder = new StringBuilder();
+                for (var ex2 = ex; ex2 != null; ex2 = ex2.InnerException)
                 {
                     stringBuilder.AppendFormat("{0} : {1}", ex2.GetType().Name, ex2.Message);
                     stringBuilder.AppendLine();
@@ -190,16 +199,6 @@ namespace Reed.UnitTesting.Validators
 
         void IXmlTransformationLogger.LogMessage(MessageType type, string message, params object[] messageArgs)
         {
-            ////MessageImportance messageImportance;
-            ////if (type != MessageType.Normal)
-            ////{
-            ////    messageImportance = type != MessageType.Verbose ? MessageImportance.Normal : MessageImportance.Low;
-            ////}
-            ////else
-            ////{
-            ////    messageImportance = MessageImportance.Normal;
-            ////}
-
             this.LogMessage(type, string.Concat(this.IndentString, message), messageArgs);
         }
 
@@ -207,11 +206,13 @@ namespace Reed.UnitTesting.Validators
         {
             if (this.treatWarningsAsErrors)
             {
-                this.LogWarning(message, messageArgs);
+                this.LogWarning(null, 0, 0, message, messageArgs);
+                //this.LogWarning(message, messageArgs);
             }
             else
             {
-                this.LogError(message, messageArgs);
+                this.LogError(null, 0, 0, message, messageArgs);
+                //this.LogError(message, messageArgs);
             }
         }
 
@@ -231,13 +232,11 @@ namespace Reed.UnitTesting.Validators
         {
             if (this.treatWarningsAsErrors)
             {
-                this.LogError(null, null, null, file, lineNumber, linePosition, 0, 0,
-                    string.Format(message, messageArgs));
+                this.LogError(file, lineNumber, linePosition, string.Format(message, messageArgs));
             }
             else
             {
-                this.LogWarning(null, null, null, file, lineNumber, linePosition, 0, 0,
-                    string.Format(message, messageArgs));
+                this.LogWarning(file, lineNumber, linePosition, string.Format(message, messageArgs));
             }
         }
 
@@ -264,51 +263,32 @@ namespace Reed.UnitTesting.Validators
         ///   <paramref name="message" /> is null.</exception>
         internal void LogMessage(MessageType importance, string message, params object[] messageArgs)
         {
-            ////BuildMessageEventArgs buildMessageEventArgs = new BuildMessageEventArgs(message, null, "UnitTest", importance, DateTime.UtcNow, messageArgs);
-            //if (this.BuildEngine == null)
-            //{
-            //    ErrorUtilities.ThrowInvalidOperation("LoggingBeforeTaskInitialization", new object[]
-            //    {
-            //        buildMessageEventArgs.Message
-            //    });
-            //}
-            //this.LogMessageEvent(buildMessageEventArgs);
             this.verboseMessageStore.AppendLine(string.Format(message, messageArgs));
         }
 
-        /// <summary>Logs an error with the specified message.</summary>
-        /// <param name="message">The message.</param>
-        /// <param name="messageArgs">Optional arguments for formatting the message string.</param>
-        /// <exception cref="T:System.ArgumentNullException">
-        ///   <paramref name="message" /> is null.</exception>
-        private void LogError(string message, params object[] messageArgs)
-        {
-            this.LogError(null, null, null, null, 0, 0, 0, 0, message, messageArgs);
-        }
+        /////// <summary>Logs an error with the specified message.</summary>
+        /////// <param name="message">The message.</param>
+        /////// <param name="messageArgs">Optional arguments for formatting the message string.</param>
+        /////// <exception cref="T:System.ArgumentNullException">
+        ///////   <paramref name="message" /> is null.</exception>
+        ////private void LogError(string message, params object[] messageArgs)
+        ////{
+        ////    this.LogError(null, 0, 0, message, messageArgs);
+        ////}
 
         /// <summary>Logs an error using the specified message and other error details.</summary>
-        /// <param name="subcategory">The description of the error type.</param>
-        /// <param name="errorCode">The error code.</param>
-        /// <param name="helpKeyword">The Help keyword to associate with the error.</param>
         /// <param name="file">The path to the file containing the error.</param>
         /// <param name="lineNumber">The line in the file where the error occurs.</param>
         /// <param name="columnNumber">The column in the file where the error occurs.</param>
-        /// <param name="endLineNumber">The end line in the file where the error occurs.</param>
-        /// <param name="endColumnNumber">The end column in the file where the error occurs.</param>
         /// <param name="message">The message.</param>
         /// <param name="messageArgs">Optional arguments for formatting the message string.</param>
         /// <exception cref="T:System.ArgumentNullException">
         ///   <paramref name="message" /> is null.</exception>
-        private void LogError(string subcategory, string errorCode, string helpKeyword, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, params object[] messageArgs)
+        private void LogError(string file, int lineNumber, int columnNumber, string message, params object[] messageArgs)
         {
-            ////bool flag = string.IsNullOrEmpty(file) && lineNumber == 0 && columnNumber == 0;
-            ////BuildErrorEventArgs e = new BuildErrorEventArgs(subcategory, errorCode, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, "UnitTest", DateTime.UtcNow, messageArgs);
-            ////this.LogErrorEvent(e);
             if (lineNumber > 0)
             {
-                //this.errorMessageStore.AppendLine($"({lineNumber},{columnNumber}) " + message);
-                //this.verboseMessageStore.AppendLine($"({lineNumber},{columnNumber}) " + message);
-                string format = "{0} ({1}, {2}) error: {3}";
+                var format = "{0} ({1}, {2}) error: {3}";
                 this.errorMessageStore.AppendLine(string.Format(format, System.IO.Path.GetFileName(file), lineNumber,
                     columnNumber,
                     string.Format(message, messageArgs)));
@@ -341,7 +321,7 @@ namespace Reed.UnitTesting.Validators
             }
             else
             {
-                StringBuilder stringBuilder = new StringBuilder(200);
+                var stringBuilder = new StringBuilder(200);
                 do
                 {
                     stringBuilder.Append(exception.GetType().Name);
@@ -355,38 +335,30 @@ namespace Reed.UnitTesting.Validators
                 } while (exception != null);
                 text = stringBuilder.ToString();
             }
-            this.LogError(null, null, null, file, 0, 0, 0, 0, text, new object[0]);
+            this.LogError(file, 0, 0, text, new object[0]);
         }
 
-        /// <summary>Logs a warning with the specified message.</summary>
-        /// <param name="message">The message.</param>
-        /// <param name="messageArgs">Optional arguments for formatting the message string.</param>
-        /// <exception cref="T:System.ArgumentNullException">
-        ///   <paramref name="message" /> is null.</exception>
-        private void LogWarning(string message, params object[] messageArgs)
-        {
-            this.LogWarning(null, null, null, null, 0, 0, 0, 0, message, messageArgs);
-        }
+        /////// <summary>Logs a warning with the specified message.</summary>
+        /////// <param name="message">The message.</param>
+        /////// <param name="messageArgs">Optional arguments for formatting the message string.</param>
+        /////// <exception cref="T:System.ArgumentNullException">
+        ///////   <paramref name="message" /> is null.</exception>
+        ////private void LogWarning(string message, params object[] messageArgs)
+        ////{
+        ////    this.LogWarning(null, 0, 0, message, messageArgs);
+        ////}
 
         /// <summary>Logs a warning using the specified message and other warning details.</summary>
-        /// <param name="subcategory">The description of the warning type.</param>
-        /// <param name="warningCode">The warning code.</param>
-        /// <param name="helpKeyword">The Help keyword to associate with the warning.</param>
         /// <param name="file">The path to the file containing the warning.</param>
         /// <param name="lineNumber">The line in the file where the warning occurs.</param>
         /// <param name="columnNumber">The column in the file where the warning occurs.</param>
-        /// <param name="endLineNumber">The end line in the file where the warning occurs.</param>
-        /// <param name="endColumnNumber">The end column in the file where the warning occurs.</param>
         /// <param name="message">The message.</param>
         /// <param name="messageArgs">Optional arguments for formatting the message string.</param>
         /// <exception cref="T:System.ArgumentNullException">
         ///   <paramref name="message" /> is null.</exception>
-        private void LogWarning(string subcategory, string warningCode, string helpKeyword, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, params object[] messageArgs)
+        private void LogWarning(string file, int lineNumber, int columnNumber, string message, params object[] messageArgs)
         {
-            ////bool flag = string.IsNullOrEmpty(file) && lineNumber == 0 && columnNumber == 0;
-            ////BuildWarningEventArgs e = new BuildWarningEventArgs(subcategory, warningCode, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, "UnitTest", DateTime.UtcNow, messageArgs);
-            ////this.LogWarningEvent(e);
-            string format = "{0} ({1}, {2}) warning: {3}";
+            var format = "{0} ({1}, {2}) warning: {3}";
 
             this.warningMessageStore.AppendLine(string.Format(format, System.IO.Path.GetFileName(file), lineNumber,
                 columnNumber,
@@ -395,19 +367,17 @@ namespace Reed.UnitTesting.Validators
             this.verboseMessageStore.AppendLine(string.Format(format, System.IO.Path.GetFileName(file), lineNumber,
                 columnNumber,
                 string.Format(message, messageArgs)));
-
-            //this.warningMessageStore.AppendLine(message);
         }
 
-        /// <summary>
-        /// Resets the current instance of all stored messages.
-        /// </summary>
-        public void Reset()
-        {
-            this.errorMessageStore.Clear();
-            this.warningMessageStore.Clear();
-            this.verboseMessageStore.Clear();
-        }
+        /////// <summary>
+        /////// Resets the current instance of all stored messages.
+        /////// </summary>
+        ////public void Reset()
+        ////{
+        ////    this.errorMessageStore.Clear();
+        ////    this.warningMessageStore.Clear();
+        ////    this.verboseMessageStore.Clear();
+        ////}
 
         #endregion Methods
     }

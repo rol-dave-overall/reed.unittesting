@@ -1,16 +1,16 @@
 ﻿using System;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Reed.UnitTesting.Validators;
 
 namespace Reed.UnitTesting.XmlTransform.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class XmlTransformTests
     {
         public TestContext TestContext { get; set; }
 
-        [TestMethod]
+        [Test]
         [ExpectedException(typeof(ArgumentNullException))]
         public void ThrowExceptionWhenSourceIsNull()
         {
@@ -19,7 +19,7 @@ namespace Reed.UnitTesting.XmlTransform.Tests
             newValidator.Validate(null, "test");
         }
 
-        [TestMethod]
+        [Test]
         [ExpectedException(typeof(ArgumentNullException))]
         public void ThrowExceptionWhenSourceIsEmpty()
         {
@@ -28,7 +28,7 @@ namespace Reed.UnitTesting.XmlTransform.Tests
             newValidator.Validate(string.Empty, "test");
         }
 
-        [TestMethod]
+        [Test]
         [ExpectedException(typeof(ArgumentNullException))]
         public void ThrowExceptionWhenTransformationIsNull()
         {
@@ -37,7 +37,7 @@ namespace Reed.UnitTesting.XmlTransform.Tests
             newValidator.Validate("test", null);
         }
 
-        [TestMethod]
+        [Test]
         [ExpectedException(typeof(ArgumentNullException))]
         public void ThrowExceptionWhenTransformationIsEmpty()
         {
@@ -46,7 +46,7 @@ namespace Reed.UnitTesting.XmlTransform.Tests
             newValidator.Validate("test", string.Empty);
         }
 
-        [TestMethod]
+        [Test]
         [ExpectedException(typeof(ArgumentNullException))]
         public void ThrowExceptionWhenSourceNotFound()
         {
@@ -55,7 +55,7 @@ namespace Reed.UnitTesting.XmlTransform.Tests
             newValidator.Validate("test", string.Empty);
         }
 
-        [TestMethod]
+        [Test]
         [ExpectedException(typeof(FileNotFoundException))]
         public void ThrowExceptionWhenTransformationNotFound()
         {
@@ -64,31 +64,65 @@ namespace Reed.UnitTesting.XmlTransform.Tests
             newValidator.Validate("test", "test");
         }
 
-        [TestMethod]
+        [Test]
         public void Validation_AttibuteFormatting()
         {
-            Transform_TestRunner_ExpectSuccess(Properties.Resources.AttributeFormatting_source, Properties.Resources.AttributeFormatting_transform);
+            Transform_TestRunner_ExpectSuccess(Properties.Resources.AttributeFormatting_source, Properties.Resources.AttributeFormatting_transform, Properties.Resources.AttributeFormatting);
         }
 
-        [TestMethod]
+        [Test]
         public void Validation_TagFormatting()
         {
-            Transform_TestRunner_ExpectSuccess(Properties.Resources.TagFormatting_source, Properties.Resources.TagFormatting_transform);
+            Transform_TestRunner_ExpectSuccess(Properties.Resources.TagFormatting_source, Properties.Resources.TagFormatting_transform, Properties.Resources.TagFormatting);
         }
 
-        [TestMethod]
+        [Test]
         public void Validation_ErrorAndWarning()
         {
             Transform_TestRunner_ExpectFail(Properties.Resources.WarningsAndErrors_source, Properties.Resources.WarningsAndErrors_transform, Properties.Resources.WarningsAndErrors);
         }
 
-        [TestMethod]
-        public void Validation_ExpectSuccess()
+        [Test]
+        public void Validation_ErrorAndWarning_DualLogs()
         {
-            Transform_TestRunner_ExpectSuccess(Properties.Resources.Web, Properties.Resources.Web_Release);
+            Transform_TestRunner_ExpectFail(Properties.Resources.WarningsAndErrors_source, Properties.Resources.WarningsAndErrors_transform, Properties.Resources.WarningsAndErrors);
+
+            string src = CreateATestFile("source.config", Properties.Resources.WarningsAndErrors_source);
+            string transformFile = CreateATestFile("transform.config", Properties.Resources.WarningsAndErrors_transform);
+            XmlTransformationValidator validator = new XmlTransformationValidator();
+
+            bool succeed = validator.Validate(src, transformFile, false);
+
+            //test
+            Assert.AreEqual(false, succeed);
+            Assert.AreNotEqual(validator.ErrorLog, string.Empty);
+            Assert.AreNotEqual(validator.WarningLog, string.Empty);
         }
 
-        private void Transform_TestRunner_ExpectSuccess(string source, string transform)
+        [Test]
+        public void Validation_ErrorAndWarning_SingleLog()
+        {
+            Transform_TestRunner_ExpectFail(Properties.Resources.WarningsAndErrors_source, Properties.Resources.WarningsAndErrors_transform, Properties.Resources.WarningsAndErrors);
+
+            string src = CreateATestFile("source.config", Properties.Resources.WarningsAndErrors_source);
+            string transformFile = CreateATestFile("transform.config", Properties.Resources.WarningsAndErrors_transform);
+            XmlTransformationValidator validator = new XmlTransformationValidator();
+
+            bool succeed = validator.Validate(src, transformFile);
+
+            //test
+            Assert.AreEqual(false, succeed);
+            Assert.AreNotEqual(validator.ErrorLog, string.Empty);
+            Assert.AreEqual(validator.WarningLog, string.Empty);
+        }
+
+        [Test]
+        public void Validation_ExpectSuccess()
+        {
+            Transform_TestRunner_ExpectSuccess(Properties.Resources.Web, Properties.Resources.Web_Release, string.Empty);
+        }
+
+        private void Transform_TestRunner_ExpectSuccess(string source, string transform, string expectedLog)
         {
             string src = CreateATestFile("source.config", source);
             string transformFile = CreateATestFile("transform.config", transform);
@@ -99,6 +133,11 @@ namespace Reed.UnitTesting.XmlTransform.Tests
             //test
             Assert.AreEqual(true, succeed);
             Assert.AreEqual(string.Empty, validator.ErrorLog);
+
+            if (expectedLog != string.Empty)
+            {
+                CompareMultiLines(expectedLog, validator.VerboseLog);
+            }
         }
 
         private void Transform_TestRunner_ExpectFail(string source, string transform, string expectedLog)
@@ -134,7 +173,7 @@ namespace Reed.UnitTesting.XmlTransform.Tests
 
         private string GetTestFilePath(string filename)
         {
-            string folder = Path.Combine(this.TestContext.TestDeploymentDir, this.TestContext.TestName);
+            string folder = Path.Combine(TestContext.CurrentContext.WorkDirectory, TestContext.CurrentContext.Test.Name);
             Directory.CreateDirectory(folder);
             string file = Path.Combine(folder, filename);
             return file;

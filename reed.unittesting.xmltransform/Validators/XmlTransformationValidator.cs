@@ -89,7 +89,9 @@ namespace Reed.UnitTesting.Validators
         /// <remarks>The <see cref="ErrorLog"/> and <see cref="VerboseLog"/> properties can be used to determine the steps the transformation has done and any errors that occurred.</remarks>
         public bool Validate(string source, string transformation)
         {
-            return Validate(source, transformation, true);
+            var returnValue = this.Validate(source, transformation, true);
+
+            return returnValue;
         }
 
         #endregion Methods
