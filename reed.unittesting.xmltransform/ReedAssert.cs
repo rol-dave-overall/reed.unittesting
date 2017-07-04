@@ -259,9 +259,23 @@ namespace Reed.UnitTesting
         /// Assert that an array, list or other collection is not empty.
         /// </summary>
         /// <param name="collection">The value to be tested.</param>
-        public static void IsNotEmpty(ICollection collection)
+        public static void IsNotEmpty(IEnumerable collection)
         {
-            IsNotEmpty(collection, "Expected a collection containing &lt;0&gt; items but actual was &lt;{0}&gt; items.", collection.Count, 0);
+            int collectionCount;
+            var is3 = collection as ICollection;
+
+            var collection1 = collection as IList<object> ?? collection.Cast<object>().ToList();
+            if (is3 != null)
+            {
+                collectionCount = is3.Count;
+            }
+            else
+            {
+                var enumerable = collection as IList<object> ?? collection1.Cast<object>().ToList();
+                collectionCount = enumerable.Count;
+            }
+
+            IsNotEmpty(collection, "Expected a collection containing &lt;0&gt; items but actual was &lt;{0}&gt; items.", collectionCount, 0);
         }
 
         /// <summary>
@@ -269,7 +283,7 @@ namespace Reed.UnitTesting
         /// </summary>
         /// <param name="collection">The value to be tested.</param>
         /// <param name="message">A message to display. This message can be seen in the unit test results.</param>
-        public static void IsNotEmpty(ICollection collection, string message)
+        public static void IsNotEmpty(IEnumerable collection, string message)
         {
             IsNotEmpty(collection, message, null);
         }
@@ -280,9 +294,22 @@ namespace Reed.UnitTesting
         /// <param name="collection">The value to be tested.</param>
         /// <param name="message">A message to display. This message can be seen in the unit test results.</param>
         /// <param name="parameters">An array of parameters to use when formatting <paramref name="message"/>.</param>
-        public static void IsNotEmpty(ICollection collection, string message, params object[] parameters)
+        public static void IsNotEmpty(IEnumerable collection, string message, params object[] parameters)
         {
-            Assert.IsFalse(collection.Count == 0, message, parameters);
+            int collectionCount;
+            var is3 = collection as ICollection;
+
+            if (is3 != null)
+            {
+                collectionCount = is3.Count;
+            }
+            else
+            {
+                var enumerable = collection as IList<object> ?? collection.Cast<object>().ToList();
+                collectionCount = enumerable.Count;
+            }
+
+            Assert.IsFalse(collectionCount != 0, message, parameters);
         }
 
         /// <summary>
@@ -312,7 +339,7 @@ namespace Reed.UnitTesting
         /// <param name="parameters">An array of parameters to use when formatting <paramref name="message"/>.</param>
         public static void IsNotEmpty(string value, string message, params object[] parameters)
         {
-            Assert.IsFalse(value.Length == 0, message, parameters);
+            Assert.IsFalse(value.Length != 0, message, parameters);
         }
 
         /// <summary>
