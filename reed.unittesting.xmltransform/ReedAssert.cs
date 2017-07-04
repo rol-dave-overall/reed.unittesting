@@ -309,6 +309,36 @@ namespace Reed.UnitTesting
             Assert.IsInstanceOfType(value, typeof(T));
         }
 
+        public static void IsNotInstanceOf(Type expected, object actual)
+        {
+            Assert.IsFalse(actual.GetType() == expected);
+        }
+
+        public static void IsNotInstanceOf(Type expected, object actual, string message, params object[] parms)
+        {
+            Assert.IsFalse(actual.GetType() == expected, message, parms);
+        }
+
+        public static void IsNotInstanceOf<T>(object actual)
+        {
+            Assert.IsFalse(actual.GetType() == typeof(T));
+        }
+
+        public static void IsNotInstanceOf<T>(object actual, string message, params object[] parms)
+        {
+            Assert.IsFalse(actual.GetType() == typeof(T), message, parms);
+        }
+
+        public static void IsNotNullOrEmpty(string value)
+        {
+            Assert.IsFalse(string.IsNullOrEmpty(value));
+        }
+
+        public static void IsNullOrEmpty(string value)
+        {
+            Assert.IsTrue(string.IsNullOrEmpty(value));
+        }
+
         /// <summary>
         /// Asserts that an object may not be assigned a value of a given <see cref="Type"/>.
         /// </summary>
