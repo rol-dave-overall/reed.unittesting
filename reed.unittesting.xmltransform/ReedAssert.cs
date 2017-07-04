@@ -10,6 +10,96 @@ namespace Reed.UnitTesting
 {
     public static class ReedAssert
     {
+        /// <summary>
+
+        /// Asserts that a condition is true. If the condition is false the method throws
+
+        /// an <see cref="AssertionException"/>.
+
+        /// </summary>
+
+        /// <param name="condition">The evaluated condition</param>
+
+        /// <param name="message">The message to display if the condition is false</param>
+
+        /// <param name="args">Arguments to be used in formatting the message</param>
+
+        public static void That(bool condition, string message, params object[] args)
+
+        {
+            Assert.IsTrue(condition, message, args);
+        }
+
+        /// <summary>
+
+        /// Asserts that a condition is true. If the condition is false the method throws
+
+        /// an <see cref="AssertionException"/>.
+
+        /// </summary>
+
+        /// <param name="condition">The evaluated condition</param>
+
+        public static void That(bool condition)
+
+        {
+            Assert.IsTrue(condition);
+        }
+
+        /// <summary>
+
+        /// Asserts that a condition is true. If the condition is false the method throws
+
+        /// an <see cref="AssertionException"/>.
+
+        /// </summary>
+
+        /// <param name="condition">The evaluated condition</param>
+
+        /// <param name="getExceptionMessage">A function to build the message included with the Exception</param>
+
+        public static void That(bool condition, Func<string> getExceptionMessage)
+
+        {
+            Assert.IsTrue(condition);
+        }
+
+        /// <summary>
+
+        /// Asserts that a condition is true. If the condition is false the method throws
+
+        /// an <see cref="AssertionException"/>.
+
+        /// </summary>
+
+        /// <param name="condition">A lambda that returns a Boolean</param>
+
+        /// <param name="message">The message to display if the condition is false</param>
+
+        /// <param name="args">Arguments to be used in formatting the message</param>
+
+        public static void That(Func<bool> condition, string message, params object[] args)
+
+        {
+            Assert.IsTrue(condition.Invoke(), message, args);
+        }
+
+        /// <summary>
+
+        /// Asserts that a condition is true. If the condition is false the method throws
+
+        /// an <see cref="AssertionException"/>.
+
+        /// </summary>
+
+        /// <param name="condition">A lambda that returns a Boolean</param>
+
+        public static void That(Func<bool> condition)
+
+        {
+            Assert.IsTrue(condition.Invoke());
+        }
+
         public static void Contains(object anObject, ICollection collection)
         {
             CollectionAssert.Contains(collection, anObject);
