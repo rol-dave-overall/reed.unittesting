@@ -304,9 +304,14 @@ namespace Reed.UnitTesting
             Assert.IsTrue(value.Length == 0, message, parameters);
         }
 
-        public static void IsInstanceOf<T>(object value)
+        public static void IsInstanceOf<T>(object actual)
         {
-            Assert.IsInstanceOfType(value, typeof(T));
+            Assert.IsInstanceOfType(actual, typeof(T));
+        }
+
+        public static void IsInstanceOf(Type expected, object actual)
+        {
+            Assert.IsInstanceOfType(actual, expected);
         }
 
         public static void IsNotInstanceOf(Type expected, object actual)
